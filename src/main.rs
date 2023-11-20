@@ -1,64 +1,53 @@
-//! Small example of how to instantiate a wasm module that imports one function,
-//! showing how you can fill in host functionality for a wasm module.
+use std::fs;
+use std::sync::{Arc, Mutex};
+use toml::Value;
+use tokio::fs as tokio_fs;
+use tokio::sync::Semaphore;
 
-// You can execute this example with `cargo run --example hello`
 
-use anyhow::Result;
-use wasmtime::*;
+#[tokio::main]
+async fn main() {
 
-struct MyState {
-    name: String,
-    count: usize,
-}
+    let semaphore = Arc::new(Semaphore::new(1));
+    
+    let shared_toml = Arc::new(Mutex::new(None));
 
-fn main() -> Result<()> {
-    // First the wasm module needs to be compiled. This is done with a global
-    // "compilation environment" within an `Engine`. Note that engines can be
-    // further configured through `Config` if desired instead of using the
-    // default like this is here.
-    println!("Compiling module...");
-    let engine = Engine::default();
-    let module = Module::from_file(&engine, "examples/hello.wat")?;
+    // Spawn a tokio task to read and parse the toml file
+    let read_task = tokio::spawn(({
+        let semaphore = semaphore.clone();
+        let shared_toml = shared_toml.clone();
+        async move {
+            // Acquire the semaphore to gain exclusive access to shared_toml
+            let _permit = semaphore.acquire().await.unwrap();
 
-    // After a module is compiled we create a `Store` which will contain
-    // instantiated modules and other items like host functions. A Store
-    // contains an arbitrary piece of host information, and we use `MyState`
-    // here.
-    println!("Initializing...");
-    let mut store = Store::new(
-        &engine,
-        MyState {
-            name: "hello, world!".to_string(),
-            count: 0,
-        },
-    );
+            // Read the TOML file into a string (use your actual file path)
+            let toml_str = tokio_fs::read_to_string("config.toml")
+                .await
+                .expect("Failed to read configuration file toml");
+            
+            let toml_value: Value = toml::de::from_str(&toml_str).expect("Failed to parse TOML");
 
-    // Our wasm module we'll be instantiating requires one imported function.
-    // the function takes no parameters and returns no results. We create a host
-    // implementation of that function here, and the `caller` parameter here is
-    // used to get access to our original `MyState` value.
-    println!("Creating callback...");
-    let hello_func = Func::wrap(&mut store, |mut caller: Caller<'_, MyState>| {
-        println!("Calling back...");
-        println!("> {}", caller.data().name);
-        caller.data_mut().count += 1;
+            // Store the parsed TOML data in the shared data structure
+            *shared_toml.lock().unwrap() = Some(toml_value);
+        }
+    }));
+
+    let access_task = tokio::spawn({
+        let semaphore = semaphore.clone();
+        let shared_toml = shared_toml.clone();
+        async move {
+            // Acquire the semaphore to gain access to shared_toml
+            let _permit = semaphore.acquire().await.unwrap();
+            
+            // Access the parsed TOML data and print the value
+            let mutex_guard = shared_toml.lock().unwrap();
+            let toml_value = mutex_guard.as_ref().unwrap();
+            let mode = toml_value["mode"].as_str().expect("Missing or invalid mode field");
+            println!("mode: {}", mode);
+        }
     });
 
-    // Once we've got that all set up we can then move to the instantiation
-    // phase, pairing together a compiled module as well as a set of imports.
-    // Note that this is where the wasm `start` function, if any, would run.
-    println!("Instantiating module...");
-    let imports = [hello_func.into()];
-    let instance = Instance::new(&mut store, &module, &imports)?;
+    tokio::join!(read_task, access_task);
 
-    // Next we poke around a bit to extract the `run` function from the module.
-    println!("Extracting export...");
-    let run = instance.get_typed_func::<(), ()>(&mut store, "run")?;
 
-    // And last but not least we can call it!
-    println!("Calling export...");
-    run.call(&mut store, ())?;
-
-    println!("Done.");
-    Ok(())
 }
