@@ -1,7 +1,7 @@
 
 # g8r
 
-![g8r](./assets/g8r.png)
+![g8r](./assets/g8r_.png)
 
 ## Overview
 g8r (pronounced "gator") is a powerful configuration management and event-driven automation engine designed to streamline and automate the management of infrastructure and services. It enables dynamic responses to infrastructure events, facilitating seamless and automated operations.
