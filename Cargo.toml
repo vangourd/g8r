@@ -1,4 +1,9 @@
-workspace = { members = ["experiments/connect"] }
+[workspace]
+members = [
+    "experiments/connect",
+    "experiments/snapper",
+]
+
 [package]
 name = "g8r"
 version = "0.1.0"
