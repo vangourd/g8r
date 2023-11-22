@@ -12,6 +12,7 @@ pub struct Config {
     pub refresh: String,
     pub token: String,
     pub tag: String,
+    pub username: String,
 }
 
 impl fmt::Display for Config {

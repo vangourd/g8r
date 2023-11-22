@@ -7,19 +7,24 @@ mod utils;
 use utils::config::Config;
 use utils::repo;
 
+use log::{info, warn, error, log_enabled, Level};
+
+
 #[tokio::main]
 async fn main() {
-    println!("Starting snapper ...");
+    env_logger::init();
+    print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+    info!("Starting snapper ...");
 
     let config = Config::from_file("config.yaml")
                     .expect("Failed to load config");
 
     println!("Initating reconciliation loop every {}",config.refresh);
-    // Initialize repo
-    
+
+    let r = repo::initialize(config.repo,config.token,config.branch,config.tag,config.username).unwrap();
+
     loop{
-        println!("Reconciling...");
-        println!("Action...");
+        repo::fetch(&r);
         sleep(Duration::new(5,0));
         println!("Done...");
         sleep(Duration::new(30,0));
