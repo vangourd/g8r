@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gix = "0.55.2"
+git2 = "0.18.1"
 serde = "1.0.193"
 serde_derive = "1.0.193"
 serde_yaml = "0.9.27"

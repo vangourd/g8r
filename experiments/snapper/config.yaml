@@ -1,5 +1,5 @@
-repo: url
+repo: https://github.com/vangourd/iac
 branch: main
-token: token
+token: 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
 refresh: 5m
-tag:
+tag: 

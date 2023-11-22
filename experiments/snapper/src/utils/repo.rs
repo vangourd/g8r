@@ -1,7 +1,9 @@
-extern crate gix;
+use git2::{Repository, Error};
 
-use gix::Repository;
 
-pub fn load_config() {
+pub fn clone(url: &str,token: &str) -> Result<Repository, Error> {
+    let repo = Repository::clone(&url, "/iac")
+        .expect("Failed to clone GIT URL {}",&url)
     
+
 }
