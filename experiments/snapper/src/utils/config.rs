@@ -13,6 +13,7 @@ pub struct Config {
     pub token: String,
     pub tag: String,
     pub username: String,
+    pub local_path: String,
 }
 
 impl fmt::Display for Config {

@@ -5,22 +5,19 @@ use log::{info, warn, error, log_enabled, Level, debug};
 use std::{path::Path};
 use url::{Url, ParseError};
 
-use crate::utils::config;
+use crate::utils;
 
 pub struct IacSync {
-    remote: git2::Repository,
     local: git2::Repository,
-    config: config::Config,
+    config: utils::config::Config,
 }
 
 impl IacSync {
-    pub fn new(config: Config) -> Result<Repository, Error> {
+    pub fn new(config: utils::config::Config) -> Result<IacSync, Error> {
 
-        // Use parsed config to populate an IacSync configuration
-        this.config = config;
-
-        if !Path::exists(Path::new(&path)) {
-            self.clone_repo()
+        // Check if local repository exists
+        if !Path::exists(Path::new(&self.config.path)) {
+            self.local = self.clone_repo(config);
         } else {
             let repo = Repository::open("./iac/")
                 .expect("Unable to open existing repository path");
@@ -30,20 +27,20 @@ impl IacSync {
         }
     }
 
-    pub fn clone_repo(path: &str, repo: &str,username: &str, token: &str) -> Result<Repository, Error> {
-            let mut configured_url = Url::parse(&repo)
+    pub fn clone_repo(config: utils::config::Config) -> Result<Repository, Error> {
+            let mut configured_url = Url::parse(&config.repo)
                 .expect("Unable to parse URL");
     
-            configured_url.set_username(&username)
+            configured_url.set_username(&config.username)
                 .expect("Unable to set username");
-            configured_url.set_password(Some(&token))
+            configured_url.set_password(Some(&config.token))
                 .expect("Unable to set password");
             
             error!("Configured URL: {}",&configured_url);
     
-            let repo= Repository::clone(&configured_url.as_str(), &repo_path)
+            let repo= Repository::clone(&configured_url.as_str(), &config.local_path)
                 .expect("Unable to clone repository");
-            info!("Cloned repository {}",&url);
+            info!("Cloned repository {}",&config.repo);
             Ok(repo)
     }
 

@@ -21,12 +21,7 @@ async fn main() {
 
     println!("Initating reconciliation loop every {}",config.refresh);
 
-    let iac = repo::IacSync::new(
-        "./local",
-        config.repo,
-        config.username,
-        config.token,
-        )
+    let iac = repo::IacSync::new(config)
         .open_or_init()
         .sync_for_changes();
 
