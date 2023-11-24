@@ -8,47 +8,63 @@ use url::{Url, ParseError};
 use crate::utils;
 
 pub struct IacSync {
-    local: git2::Repository,
+    local: Option<git2::Repository>,
     config: utils::config::Config,
 }
 
-impl IacSync {
-    pub fn new(config: utils::config::Config) -> Result<IacSync, Error> {
-
-        // Check if local repository exists
-        if !Path::exists(Path::new(&self.config.path)) {
-            self.local = self.clone_repo(config);
-        } else {
-            let repo = Repository::open("./iac/")
-                .expect("Unable to open existing repository path");
-            fetch(&repo).expect("Unable to fetch from repo");
-    
-            return Ok(repo)
+pub impl IacSync {
+    pub fn new(config: utils::config::Config) -> IacSync {
+        return IacSync {
+            config: config,
+            local: None,
         }
     }
 
-    pub fn clone_repo(config: utils::config::Config) -> Result<Repository, Error> {
-            let mut configured_url = Url::parse(&config.repo)
-                .expect("Unable to parse URL");
-    
-            configured_url.set_username(&config.username)
-                .expect("Unable to set username");
-            configured_url.set_password(Some(&config.token))
-                .expect("Unable to set password");
-            
-            error!("Configured URL: {}",&configured_url);
-    
-            let repo= Repository::clone(&configured_url.as_str(), &config.local_path)
-                .expect("Unable to clone repository");
-            info!("Cloned repository {}",&config.repo);
-            Ok(repo)
+    pub fn init_repo(&self){
+
     }
 
     pub fn sync(){
 
     }
+}
+
+#[derive(Default)]
+struct IacSyncBuilder{
 
 
+
+}
+
+// Check if local repository exists
+if !Path::exists(Path::new(&config.local_path)) {
+    let repo = clone_repo(config)?;
+    return Ok(IacSync {
+        local: repo,
+        config: config,
+    })
+} else {
+    let repo = Repository::open("./iac/")
+        .expect("Unable to open existing repository path");
+    fetch(&repo).expect("Unable to fetch from repo");
+
+}
+
+pub fn clone_repo(config: utils::config::Config) -> Result<Repository, Error> {
+    let mut configured_url = Url::parse(&config.repo)
+        .expect("Unable to parse URL");
+
+    configured_url.set_username(&config.username)
+        .expect("Unable to set username");
+    configured_url.set_password(Some(&config.token))
+        .expect("Unable to set password");
+    
+    error!("Configured URL: {}",&configured_url);
+
+    let repo= Repository::clone(&configured_url.as_str(), &config.local_path)
+        .expect("Unable to clone repository");
+    info!("Cloned repository {}",&config.repo);
+    Ok(repo)
 }
 
 pub fn initialize(url: String, token: String, branch: String ,tag: String, username: String) -> Result<Repository, std::fmt::Error> {
