@@ -13,7 +13,7 @@ use log::{info, warn, error, log_enabled, Level};
 #[tokio::main]
 async fn main() {
     env_logger::init();
-    print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+    //print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
     info!("Starting snapper ...");
 
     let config = Config::from_file("config.yaml")
@@ -21,12 +21,10 @@ async fn main() {
 
     println!("Initating reconciliation loop every {}",config.refresh);
 
-    let iac = repo::IacSync::new(config)
-        .open_or_init()
-        .sync_for_changes();
+    let _iac = repo::IacSync::new(config)
+        .init();
 
     loop{
-        iac.sync_for_changes();
         sleep(Duration::new(5,0));
         println!("Done...");
         sleep(Duration::new(30,0));

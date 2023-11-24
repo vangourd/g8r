@@ -21,18 +21,18 @@ impl IacSync {
     }
 
 
-    pub fn init(&self) {
+    pub fn init(mut self) {
 
         let repo_path = "./iac/";
 
         if !Path::exists(Path::new(&repo_path)) {
 
-            let mut configured_url = Url::parse(&url)
+            let mut configured_url = Url::parse(&self.config.repo)
                 .expect("Unable to parse URL");
 
-            configured_url.set_username(&username)
+            configured_url.set_username(&self.config.username)
                 .expect("Unable to set username");
-            configured_url.set_password(Some(&token))
+            configured_url.set_password(Some(&self.config.token))
                 .expect("Unable to set password");
             
 
@@ -40,33 +40,32 @@ impl IacSync {
 
             let repo= Repository::clone(&configured_url.as_str(), &repo_path)
                 .expect("Unable to clone repository");
-            info!("Cloned repository {}",&url);
-            Ok(repo)
+            info!("Cloned repository {}",&self.config.repo);
+
         } else {
             let repo = Repository::open("./iac/")
                 .expect("Unable to open existing repository path");
-            fetch(&repo).expect("Unable to fetch from repo");
-
-            return Ok(repo)
+            self.local = Some(repo);
+            self.fetch().expect("Unable to fetch from repo");
         }
 
         
     }
 
 
-    pub fn check_local(&self){
+    pub fn check_local(mut self){
         // Check if local repository exists
         if !Path::exists(Path::new(&self.config.local_path)) {
-            let repo = clone_repo(&self.config)?;
+            let repo = self.clone();
             
         } else {
             let repo = Repository::open("./iac/")
                 .expect("Unable to open existing repository path");
-            fetch(&repo).expect("Unable to fetch from repo");
+            self.fetch().expect("Unable to fetch from repo");
 
         }
     }
-    pub fn clone_repo(&self) -> Result<Repository, Error> {
+    pub fn clone(&self) -> Result<Repository, Error> {
 
         let mut configured_url = Url::parse(&self.config.repo)
             .expect("Unable to parse URL");
@@ -84,10 +83,11 @@ impl IacSync {
         Ok(repo)
     }
 
-    pub fn fetch(repo: &Repository) -> Result<(), git2::Error> {
-
+    pub fn fetch(mut self) -> Result<(), git2::Error> {
         info!("Fetching remote");
-        repo.find_remote("origin")
+        self.local
+            .expect("Unale to access local git repo")
+            .find_remote("origin")
             .expect("Unable to find remote")
             .fetch(&["main"], None, None)
         
