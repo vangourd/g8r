@@ -1,9 +1,8 @@
 use git2::build::CheckoutBuilder;
-use git2::{Repository, Remote, ObjectType, Error, Config, Branch};
-use git2::{Cred, RemoteCallbacks, ResetType};
-use log::{info, warn, error, log_enabled, Level, debug};
+use git2::{Repository, ObjectType, ResetType};
+use log::{info};
 use std::{path::Path};
-use url::{Url, ParseError};
+use url::{Url};
 
 use crate::utils;
 
@@ -13,9 +12,9 @@ pub struct IacSync {
 }
 
 impl IacSync {
-    pub fn new(config: utils::config::Config) -> IacSync {
+    pub fn new(config: &utils::config::Config) -> IacSync {
         return IacSync {
-            config: config,
+            config: config.clone(),
             local: None,
         }
     }

@@ -1,15 +1,17 @@
-use serde_derive::Deserialize;
 use core::fmt;
 use std::fs;
 use std::path::Path;
 use std::error::Error;
+use serde::{Serialize, Deserialize};
+use duration_string::DurationString;
 
-#[derive(Debug, Deserialize)]
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
     // Define your configuration fields here
     pub repo: String,
     pub branch: String,
-    pub refresh: String,
+    pub refresh: DurationString,
     pub token: String,
     pub tag: String,
     pub username: String,

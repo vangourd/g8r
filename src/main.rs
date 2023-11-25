@@ -1,11 +1,10 @@
 use std::thread::sleep;
 use std::time::Duration;
-
+use log::{info};
 use tokio;
 
 mod utils;
 
-use log::{info, warn, error, log_enabled, Level};
 
 
 #[tokio::main]
@@ -19,14 +18,15 @@ async fn main() {
 
     println!("Initating reconciliation loop every {}",config.refresh);
 
-    let mut iac = utils::repo::IacSync::new(config);
+    let mut iac = utils::repo::IacSync::new(&config);
     iac.init();
 
     loop{
         if iac.out_of_sync().unwrap() {
             iac.reset().unwrap();
         }
-        sleep(Duration::new(30,0));
+        sleep(config.refresh.into());
+        println!("New loop")
     }
 
     // Evaluate IAC rules for host

@@ -1,5 +1,5 @@
 [package]
-name = "snapper"
+name = "g8r"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,9 +9,11 @@ edition = "2021"
 env_logger = "0.10.1"
 git2 = "0.18.1"
 log = "0.4.20"
-serde = "1.0.193"
+serde = { version = "1.0.193", features=["derive"] }
 serde_derive = "1.0.193"
 serde_yaml = "0.9.27"
+serde_json = "1.0"
 tera = "1.19.1"
 tokio = { version = "1", features = ["full"] }
 url = "2.4.1"
+duration-string = { version = "0.3.0", features = ["serde"]}
