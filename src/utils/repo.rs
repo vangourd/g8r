@@ -56,6 +56,24 @@ impl IacSync {
         
     }
 
+    pub fn out_of_sync(&mut self) -> Result<bool, git2::Error> {
+
+        let repo = self.local.as_mut().unwrap();
+
+        repo.find_remote("origin").unwrap().fetch(&["main"], None, None)?;
+
+        
+        let local_branch_commit = repo.revparse_single("refs/heads/main").unwrap().id();
+        let remote_branch_commit = repo.revparse_single("refs/remotes/origin/main").unwrap().id();
+
+        if local_branch_commit != remote_branch_commit {
+            Ok(true)
+        } else {
+            Ok(false)
+        }
+
+    }
+
 
     pub fn fetch(&mut self) -> Result<(), git2::Error> {
         info!("Fetching remote");
