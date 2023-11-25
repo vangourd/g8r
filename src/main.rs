@@ -16,7 +16,7 @@ async fn main() {
     let config = utils::config::Config::from_file("config.yaml")
                     .expect("Failed to load config");
 
-    println!("Initating reconciliation loop every {}",config.refresh);
+    println!("Initating reconciliation loop every {}",configz.refresh);
 
     let mut iac = utils::repo::IacSync::new(&config);
     iac.init();
@@ -25,6 +25,11 @@ async fn main() {
         if iac.out_of_sync().unwrap() {
             iac.reset().unwrap();
         }
+        // Load roster file
+            // For duty in roster file
+                // if hostname in duty
+                    // parse corresponding duty file
+                        // pass configuration context to module for execution
         sleep(config.refresh.into());
         println!("New loop")
     }
