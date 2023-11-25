@@ -4,6 +4,8 @@ use std::error::Error;
 use std::fs;
 use std::fmt;
 
+use crate::utils::duty::Duty;
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Roster{
     duties: HashMap<String, Vec<String>>,
@@ -14,6 +16,13 @@ impl Roster {
         let file_content = fs::read_to_string(file_path)?;
         let roster: Roster = serde_yaml::from_str(&file_content)?;
         Ok(roster)
+    }
+
+    pub fn get_duties(&self, hostname: &str) -> Vec<Duty> {
+        self.duties.iter()
+            .filter(|(_, hostnames) |hostnames.contains(&String::from(hostname)))
+            .map(|(duty_name, _)| Duty {name: duty_name.clone() })
+            .collect()
     }
 }
 
