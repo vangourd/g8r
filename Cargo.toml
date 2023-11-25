@@ -1,17 +1,17 @@
-[workspace]
-members = [
-    "experiments/connect",
-    "experiments/snapper",
-]
-
 [package]
-name = "g8r"
+name = "snapper"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.75"
+env_logger = "0.10.1"
+git2 = "0.18.1"
+log = "0.4.20"
+serde = "1.0.193"
+serde_derive = "1.0.193"
+serde_yaml = "0.9.27"
+tera = "1.19.1"
 tokio = { version = "1", features = ["full"] }
-toml = "0.8.8"
+url = "2.4.1"
