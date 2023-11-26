@@ -1,10 +1,21 @@
-use std::error::Error;
 
-pub trait Duty{
-    fn id(&self) -> &str;
-    fn parse(&self) -> Result<(), Box<dyn Error>>;
-    fn execute(&self) -> Result<(), Box<dyn Error>>;
-    fn out_of_spec(&self) -> Result<(), Box<dyn Error>>;
-    fn apply(&self) -> Result<(), Box<dyn Error>>;
+use crate::utils::task::Task;
+use std::error:Error;
+
+pub struct Duty{
+    name: &str,
+    tasks: <Option<Vec<Task>>
 }
 
+impl Duty {
+    pub fn new(name: &str) -> Result<Duty, Error> {
+        Duty{
+            name: &name,
+            tasks: None
+        }
+    }
+
+    pub fn load_tasks() -> Result<(), Error> {
+        Ok(())
+    }
+}

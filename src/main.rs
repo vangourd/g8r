@@ -43,8 +43,11 @@ async fn main() {
 
         for duty in duties {
             info!("Duty: {}", duty.id());
-            duty.parse();
-            duty.execute();
+            let tasks = duty.parse()
+            for task in tasks {
+                task.execute();
+            }
+            
         }
                 // parse corresponding duty file
                     // pass configuration context to module for execution

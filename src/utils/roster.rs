@@ -13,22 +13,14 @@ pub struct Roster{
 }
 
 impl Roster {
-    pub fn new(file_path: &str) -> Result<Roster, Box<dyn Error>> {
+    pub fn new(file_path: &str) -> Result<(), Error>> {
         let file_content = fs::read_to_string(file_path)?;
         let roster: Roster = serde_yaml::from_str(&file_content)?;
         Ok(roster)
     }
 
-    pub fn get_duties(&self, hostname: &str) -> Vec<Box<dyn Duty + '_>> {
-        self.duties.iter()
-            .filter(|(_, hostnames)| hostnames.contains(&String::from(hostname)))
-            .map(|(duty_name, _)| {
-                match duty_name.as_str() {
-                    "echo" => Box::new(EchoDuty{name: duty_name}) as Box<dyn Duty>,
-                    _ => panic!("Unknown duty type {}",duty_name),
-                }
-            })
-            .collect()
+    pub fn get_duties(&self) -> Result<Vec<Duty>> {
+        
     }
 }
 
