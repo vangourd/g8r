@@ -7,6 +7,53 @@
 g8r (pronounced "gator") is a powerful configuration management and event-driven automation engine designed to streamline and automate the management of infrastructure and services. It enables dynamic responses to infrastructure events, facilitating seamless and automated operations.
 
 ## Current Architecture Plans
+```mermaid
+classDiagram
+    class Main {
+        +Repo repo
+        +Config config
+        +Roster roster
+        --init()
+        --run()
+    }
+    class Config {
+        <<crate>>
+        +String path
+        +String settings
+        --parseConfig()
+    }
+    class Repo {
+        <<crate>>
+        +String repositoryName
+        +String repositoryURL
+        --manageRepository()
+    }
+    class Roster {
+        <<crate>>
+        +List~Duty~
+        --manageDuties()
+    }
+    class Duty {
+        <<crate>>
+        +String name
+        +List~Task~
+        --trackOrchestration()
+    }
+    class Task {
+        <<crate>>
+        +String taskType
+        +String executionContext
+        --performExecution()
+        --selectModule(String moduleName)
+    }
+
+    Main -- Config : uses
+    Main -- Repo : uses
+    Main -- Roster : uses
+    Roster "1" -- "*" Duty : contains
+    Duty "1" -- "*" Task : holds
+
+```
 
 ## Features
 None currently it's purely theoretical
