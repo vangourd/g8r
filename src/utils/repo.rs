@@ -1,4 +1,3 @@
-use git2::build::CheckoutBuilder;
 use git2::{Repository, ObjectType, ResetType};
 use log::{info};
 use std::{path::Path};
@@ -39,7 +38,7 @@ impl IacSync {
                 .expect("Unable to set password");
 
             // Clone the repository with the authenticated API call
-            let repo= Repository::clone(&configured_url.as_str(), &repo_path)
+            Repository::clone(&configured_url.as_str(), &repo_path)
                 .expect("Unable to clone repository");
             info!("Cloned repository {}",&self.config.repo);
 
@@ -94,10 +93,6 @@ impl IacSync {
         let repo = self.local.as_mut().unwrap();
         let commit = repo.find_reference(&format!("FETCH_HEAD"))?.peel(ObjectType::Commit)?;
         //let branch = repo.find_branch("main", git2::BranchType::Local)?;
-
-        // Create a CheckoutBuilder for configuring the hard reset
-        // 'force()' ensures that all changes in the working directory are overritten
-        let mut checkout_opts = CheckoutBuilder::new();
 
         // Perform the hard reset
         // This moves HEAD to 'origin/main', resets the index, and updates the working directory

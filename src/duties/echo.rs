@@ -1,18 +1,50 @@
-struct EchoDuty {
-    count: i32,
+use serde::{Serialize, Deserialize};
+use std::error::Error;
+use std::fs;
+
+use crate::utils::duty::Duty;
+
+#[derive(Serialize, Deserialize)]
+pub struct EchoDuty<'a> {
+    pub name: &'a str,
 }
 
-impl Duty for EchoDuty {
-    fn validate(&self) -> Result<(), String> {
-        if self.message.is_empty() {
-            Err("Message cannot be empty".to_string())
-        } else {
-            Ok(())
+// id
+// parse
+// execute
+// out_of_spec
+// apply
+
+impl Duty for EchoDuty<'_> {
+    fn id(&self) -> &str {
+        &self.name.clone()
+    }
+
+    fn parse(&self) -> Result<(), Box<dyn Error>>{
+        let file_path = format!("/duties/{}.yaml", &self.id());
+        let contents = fs::read_to_string(file_path)?;
+        let _parsed_duty: EchoDuty = serde_yaml::from_str(&contents)?;
+        Ok(())
+    }
+
+    fn execute(&self) -> Result<(),Box<dyn Error>>{
+        match self.id() {
+            "echo" => {
+                Ok(())
+            },
+            _ => {
+                Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "Invalid module")))
+            }
         }
     }
 
-    fn execute(&self) {
-        println!("{}", self.message);
+    fn out_of_spec(&self) -> Result<(), Box<dyn Error>>{
+        Ok(())
     }
+
+    fn apply(&self) -> Result<(), Box<dyn Error>>{
+        Ok(())
+    }
+
 }
 

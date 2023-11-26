@@ -1,11 +1,10 @@
 use std::thread::sleep;
-use std::time::Duration;
 use log::{info,debug};
 use tokio;
-use std::path::{Path, PathBuf};
 use hostname;
 
 mod utils;
+mod duties;
 
 #[tokio::main]
 async fn main() {
@@ -43,9 +42,9 @@ async fn main() {
         let duties = roster.get_duties(&current_hostname);
 
         for duty in duties {
-            info!("Duty: {}", duty.name);
+            info!("Duty: {}", duty.id());
             duty.parse();
-            duty.exec();
+            duty.execute();
         }
                 // parse corresponding duty file
                     // pass configuration context to module for execution

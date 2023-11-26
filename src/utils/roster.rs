@@ -4,6 +4,7 @@ use std::error::Error;
 use std::fs;
 use std::fmt;
 
+use crate::duties::echo::EchoDuty;
 use crate::utils::duty::Duty;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -18,10 +19,15 @@ impl Roster {
         Ok(roster)
     }
 
-    pub fn get_duties(&self, hostname: &str) -> Vec<Duty> {
+    pub fn get_duties(&self, hostname: &str) -> Vec<Box<dyn Duty + '_>> {
         self.duties.iter()
-            .filter(|(_, hostnames) |hostnames.contains(&String::from(hostname)))
-            .map(|(duty_name, _)| Duty{&duty_name})
+            .filter(|(_, hostnames)| hostnames.contains(&String::from(hostname)))
+            .map(|(duty_name, _)| {
+                match duty_name.as_str() {
+                    "echo" => Box::new(EchoDuty{name: duty_name}) as Box<dyn Duty>,
+                    _ => panic!("Unknown duty type {}",duty_name),
+                }
+            })
             .collect()
     }
 }
