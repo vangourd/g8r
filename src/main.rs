@@ -44,6 +44,7 @@ async fn main() {
 
         for duty in duties {
             info!("Duty: {}", duty.name);
+            duty.parse();
             duty.exec();
         }
                 // parse corresponding duty file
