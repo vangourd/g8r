@@ -44,8 +44,8 @@ async fn main() {
 
         for duty in duties {
             info!("Duty: {}", duty.name);
+            duty.exec();
         }
-        
                 // parse corresponding duty file
                     // pass configuration context to module for execution
         sleep(config.refresh.into());

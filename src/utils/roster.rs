@@ -21,7 +21,7 @@ impl Roster {
     pub fn get_duties(&self, hostname: &str) -> Vec<Duty> {
         self.duties.iter()
             .filter(|(_, hostnames) |hostnames.contains(&String::from(hostname)))
-            .map(|(duty_name, _)| Duty {name: duty_name.clone() })
+            .map(|(duty_name, _)| Duty::new(&duty_name))
             .collect()
     }
 }
