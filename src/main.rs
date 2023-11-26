@@ -29,7 +29,7 @@ async fn main() {
         info!("Loading roster file {}", &roster_path);
         let roster = utils::roster::Roster::new(&roster_path)
             .expect("Unable to locate roster file");
-        info!("{}",roster);
+        //info!("{}",roster);
 
         let current_hostname = hostname::get()
             .expect("Couldn't get hostname")
@@ -41,14 +41,14 @@ async fn main() {
 
         let duties = roster.get_duties(&current_hostname);
 
-        for duty in duties {
-            info!("Duty: {}", duty.id());
-            let tasks = duty.parse()
-            for task in tasks {
-                task.execute();
-            }
+        // for duty in duties {
+        //     info!("Duty: {}", duty.id());
+        //     let tasks = duty.parse()
+        //     for task in tasks {
+        //         task.execute();
+        //     }
             
-        }
+        // }
                 // parse corresponding duty file
                     // pass configuration context to module for execution
         sleep(config.refresh.into());
