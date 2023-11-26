@@ -10,11 +10,7 @@ g8r (pronounced "gator") is a powerful configuration management and event-driven
 ```mermaid
 classDiagram
     class Main {
-        +Repo repo
-        +Config config
-        +Roster roster
-        --init()
-        --run()
+        run()
     }
     class Config {
         <<crate>>
@@ -30,8 +26,8 @@ classDiagram
     }
     class Roster {
         <<crate>>
-        +List~Duty~
-        --manageDuties()
+        +HashMap String, Vec, String
+        get_duties() for hostname
     }
     class Duty {
         <<crate>>
@@ -52,6 +48,7 @@ classDiagram
     Main -- Roster : uses
     Roster "1" -- "*" Duty : contains
     Duty "1" -- "*" Task : holds
+
 
 ```
 
