@@ -4,7 +4,7 @@ use tokio;
 use hostname;
 
 mod utils;
-mod duties;
+mod modules;
 
 #[tokio::main]
 async fn main() {
@@ -39,20 +39,15 @@ async fn main() {
 
         debug!("Detected hostname as {}",&current_hostname);
 
-        let duties = roster.get_duties(&current_hostname);
+        
 
-        // for duty in duties {
-        //     info!("Duty: {}", duty.id());
-        //     let tasks = duty.parse()
-        //     for task in tasks {
-        //         task.execute();
-        //     }
-            
-        // }
+        
                 // parse corresponding duty file
                     // pass configuration context to module for execution
         sleep(config.refresh.into());
-    }
+
+}
+
 
 }
 

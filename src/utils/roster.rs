@@ -5,6 +5,7 @@ use log::{info};
 use std::fs;
 use std::fmt;
 
+use crate::utils::duty::Duty;
 use crate::utils::task::Task;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -17,12 +18,5 @@ impl Roster {
         let file_content = fs::read_to_string(file_path)?;
         let roster: Roster = serde_yaml::from_str(&file_content)?;
         Ok(roster)
-    }
-
-    pub fn get_duties(&self, hostname: &str) {
-        let mut duties_vec: Vec<Box<dyn Task>> = Vec::new();
-        for (name, _list) in &self.duties {
-            info!("{}",name);
-        }
     }
 }

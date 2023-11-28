@@ -36,20 +36,23 @@ classDiagram
         --trackOrchestration()
     }
     class Task {
+        <<trait>>
+        +performExecution()
+        +selectModule(String moduleName)
+    }
+    class Echo implements Task {
         <<crate>>
-        +String taskType
-        +String executionContext
-        --performExecution()
-        --selectModule(String moduleName)
+        +String echoContext
+        --performEcho()
+        --selectEchoModule(String moduleName)
     }
 
     Main -- Config : uses
     Main -- Repo : uses
     Main -- Roster : uses
     Roster "1" -- "*" Duty : contains
-    Duty "1" -- "*" Task : holds
-
-
+    Duty "1" -- "*" Echo : holds
+    Echo ..|> Task : implements
 ```
 
 ## Features
