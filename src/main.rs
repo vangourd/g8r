@@ -3,6 +3,8 @@ use log::{info,debug};
 use tokio;
 use hostname;
 
+use crate::utils::{duty::Duty, task::TaskFactory};
+
 mod utils;
 mod modules;
 
@@ -38,12 +40,27 @@ async fn main() {
             .unwrap();
 
         debug!("Detected hostname as {}",&current_hostname);
-
-        
-
-        
                 // parse corresponding duty file
                     // pass configuration context to module for execution
+
+        for (duty, hostnames) in roster.duties {
+            let mut current_duty_ids: Vec<String> = Vec::new();
+            if hostnames.contains(&current_hostname) {
+                current_duty_ids.push(duty);
+            }
+            // perform all duties
+            for id in current_duty_ids {
+                let dpath =  format!("{}{}.yaml",&config.duties_path, &id);
+                debug!("duty path: {}", &dpath);
+                let duty = Duty::new(&dpath).unwrap();
+                let tf = TaskFactory::new();
+                for task_config in duty.configs {
+                    println!("{:?}", task_config);
+                }
+            }
+        }
+        
+
         sleep(config.refresh.into());
 
 }

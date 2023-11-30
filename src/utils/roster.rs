@@ -10,7 +10,7 @@ use crate::utils::task::Task;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Roster{
-    duties: HashMap<String, Vec<String>>,
+    pub duties: HashMap<String, Vec<String>>,
 }
 
 impl Roster {

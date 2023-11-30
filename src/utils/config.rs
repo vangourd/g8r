@@ -17,6 +17,7 @@ pub struct Config {
     pub username: String,
     pub local_path: String,
     pub roster_path: String,
+    pub duties_path: String,
 }
 
 impl fmt::Display for Config {

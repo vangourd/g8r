@@ -17,7 +17,7 @@ pub struct TaskFactory {
 }
 
 impl TaskFactory {
-    fn new() -> TaskFactory  {
+    pub fn new() -> TaskFactory  {
         TaskFactory {
             task_queue: Vec::new(),
         }
