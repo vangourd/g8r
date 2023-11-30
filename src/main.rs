@@ -1,5 +1,6 @@
-use std::thread::sleep;
+use std::{thread::sleep, fs};
 use log::{info,debug};
+use std::path::Path;
 use tokio;
 use hostname;
 
@@ -50,9 +51,17 @@ async fn main() {
             }
             // perform all duties
             for id in current_duty_ids {
-                let dpath =  format!("{}{}.yaml",&config.duties_path, &id);
-                debug!("duty path: {}", &dpath);
-                let duty = Duty::new(&dpath).unwrap();
+                let dpath = Path::new(&config.duties_path);
+                let absolute_path = match fs::canonicalize(&dpath) {
+                    Ok(abs_path) => abs_path,
+                    Err(e) => panic!("Error converting path: {}", e),
+                };
+                let dpath_str = absolute_path
+                    .as_path()
+                    .to_str()
+                    .expect("Unable to convert to string");
+                debug!("duty path: {}", &dpath_str);
+                let duty = Duty::new(&dpath_str).unwrap();
                 let tf = TaskFactory::new();
                 for task_config in duty.configs {
                     println!("{:?}", task_config);

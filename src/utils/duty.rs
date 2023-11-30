@@ -18,7 +18,7 @@ pub struct Duty{
 
 impl Duty {
     pub fn new(file_path: &str) -> Result<Self, Box<dyn Error>> {
-        let file_content = fs::read_to_string()?;
+        let file_content = fs::read_to_string(file_path)?;
         let duty: Duty = serde_yaml::from_str(&file_content)?;
         Ok(duty)
     }
