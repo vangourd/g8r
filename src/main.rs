@@ -44,23 +44,23 @@ async fn main() {
                 // parse corresponding duty file
                     // pass configuration context to module for execution
 
-        for (duty, hostnames) in roster.duties {
-            let mut current_duty_ids: Vec<String> = Vec::new();
+
+        for (duty_name, hostnames) in roster.duties {
             if hostnames.contains(&current_hostname) {
-                current_duty_ids.push(duty);
-            }
-            // perform all duties
-            for id in current_duty_ids {
-                let local_duties_path = format!("{}/{}",&config.local_path,&config.duties_path);
-                let dpath_str = get_absolute_path(&local_duties_path);
-                let duty = Duty::new(&dpath_str).unwrap();
+                let duty_file_path = format!("{}/{}/{}", &config.local_path, &config.duties_path, &duty_name);
+                let absolute_path = get_absolute_path(&duty_file_path);
+
+                let duty = Duty::new(&absolute_path)
+                    .expect("Failed to create Duty from file");
+
                 let tf = TaskFactory::new();
+
                 for task_config in duty.configs {
-                    println!("{:?}", task_config);
+                    println!("{:?}" ,task_config);
                 }
             }
         }
-        
+
 
         sleep(config.refresh.into());
 
