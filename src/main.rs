@@ -51,16 +51,8 @@ async fn main() {
             }
             // perform all duties
             for id in current_duty_ids {
-                let dpath = Path::new(&config.duties_path);
-                let absolute_path = match fs::canonicalize(&dpath) {
-                    Ok(abs_path) => abs_path,
-                    Err(e) => panic!("Error converting path: {}", e),
-                };
-                let dpath_str = absolute_path
-                    .as_path()
-                    .to_str()
-                    .expect("Unable to convert to string");
-                debug!("duty path: {}", &dpath_str);
+                let local_duties_path = format!("{}/{}",&config.local_path,&config.duties_path);
+                let dpath_str = get_absolute_path(&local_duties_path);
                 let duty = Duty::new(&dpath_str).unwrap();
                 let tf = TaskFactory::new();
                 for task_config in duty.configs {
@@ -77,3 +69,13 @@ async fn main() {
 
 }
 
+
+
+fn get_absolute_path(relative_path: &String) -> String {
+    debug!("{}",relative_path);
+    fs::canonicalize(Path::new(relative_path))
+        .expect("Error converting path")
+        .to_str()
+        .expect("Unable to convert to string")
+        .to_owned()
+}
