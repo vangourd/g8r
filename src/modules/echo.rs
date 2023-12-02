@@ -6,25 +6,14 @@ use std::ops::RangeBounds;
 
 use crate::utils::task::Task;
 
-pub struct Echo;
+pub struct EchoTask {
+    module: String,
+    mutate: bool,
+    config: serde_yaml::Value
+}
 
-impl Task for Echo {
-
-    fn validate(&self, vars: &HashMap<String, String>) -> Result<(), Box<dyn Error>> {
-        if vars.contains_key("echo_message") {
-            Ok(())
-        } else {
-            Err("Validation failed: echo_message key not found".into())
-        }
+impl Task for EchoTask {
+    fn new(module: &str, mutate: bool, config: serde_yaml::Value) -> Result<Self, Box<dyn Error>> {
+        Ok(EchoTask { module: module, mutate: mutate, config: config })
     }
-
-    fn apply(&self, vars: &HashMap<String, String>) -> Result<(), Box<dyn Error>> {
-        if let Some(message) = vars.get("echo_message") {
-            println!("Echo: {}", message);
-            Ok(())
-        } else {
-            Err("Application failed: echo_message key not found".into())
-        }
-    }
-
 }

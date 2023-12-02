@@ -7,13 +7,11 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
 
-use super::task::TaskFactory;
-
 #[derive(Serialize,Deserialize)]
 pub struct Duty{
-    pub name: String,
     pub base: String,
-    pub configs: HashMap<String, String>,
+    pub mutate: bool,
+    pub tasks: serde_yaml::Value
 }
 
 impl Duty {
@@ -22,15 +20,10 @@ impl Duty {
         let duty: Duty = serde_yaml::from_str(&file_content)?;
         Ok(duty)
     }
-
-    pub fn id(&self) -> &str {
-        return &self.name
-    }
-
 }
 
 impl fmt::Display for Duty {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Name: {}, Base: {}, Configs: {:?}", &self.name, &self.base, &self.configs)
+        write!(f, "Base: {}, Configs: {:?}", &self.base, &self.tasks)
     }
 }

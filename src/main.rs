@@ -44,19 +44,17 @@ async fn main() {
                 // parse corresponding duty file
                     // pass configuration context to module for execution
 
-
+        // Duties parsing by hostname
         for (duty_name, hostnames) in roster.duties {
             if hostnames.contains(&current_hostname) {
-                let duty_file_path = format!("{}/{}/{}", &config.local_path, &config.duties_path, &duty_name);
+                let duty_file_path = format!("{}/{}{}.yaml", &config.local_path, &config.duties_path, &duty_name);
                 let absolute_path = get_absolute_path(&duty_file_path);
 
                 let duty = Duty::new(&absolute_path)
                     .expect("Failed to create Duty from file");
 
-                let tf = TaskFactory::new();
-
-                for task_config in duty.configs {
-                    println!("{:?}" ,task_config);
+                for task in duty.tasks {
+                    task.parse().apply()
                 }
             }
         }
