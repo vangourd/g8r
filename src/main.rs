@@ -4,7 +4,7 @@ use std::path::Path;
 use tokio;
 use hostname;
 
-use crate::utils::{duty::Duty, task::TaskFactory};
+use crate::utils::duty::Duty;
 
 mod utils;
 mod modules;
@@ -44,7 +44,7 @@ async fn main() {
                 // parse corresponding duty file
                     // pass configuration context to module for execution
 
-        // Duties parsing by hostname
+        // Iterate all duties in the roster
         for (duty_name, hostnames) in roster.duties {
             if hostnames.contains(&current_hostname) {
                 let duty_file_path = format!("{}/{}{}.yaml", &config.local_path, &config.duties_path, &duty_name);
@@ -53,9 +53,7 @@ async fn main() {
                 let duty = Duty::new(&absolute_path)
                     .expect("Failed to create Duty from file");
 
-                for task in duty.tasks {
-                    task.parse().apply()
-                }
+                let _ = duty.schedule_tasks();
             }
         }
 

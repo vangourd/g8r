@@ -1,12 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::error::Error;
-use log::{info};
 use std::fs;
-use std::fmt;
-
-use crate::utils::duty::Duty;
-use crate::utils::task::Task;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Roster{

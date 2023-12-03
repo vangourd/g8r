@@ -1,19 +1,15 @@
 use serde::{Serialize, Deserialize};
-use std::collections::HashMap;
-use std::error::Error;
-use std::fs;
-use std::ops::RangeBounds;
-
 use crate::utils::task::Task;
 
+#[derive(Serialize,Deserialize)]
 pub struct EchoTask {
     module: String,
     mutate: bool,
-    config: serde_yaml::Value
+    context: serde_yaml::Value
 }
 
 impl Task for EchoTask {
-    fn new(module: &str, mutate: bool, config: serde_yaml::Value) -> Result<Self, Box<dyn Error>> {
-        Ok(EchoTask { module: module, mutate: mutate, config: config })
+    fn new(module: String, mutate: bool, context: serde_yaml::Value) -> Result<Self, std::io::Error> {
+        Ok(EchoTask { module: module, mutate: mutate, context: context })
     }
 }

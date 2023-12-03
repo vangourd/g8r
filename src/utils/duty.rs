@@ -1,17 +1,12 @@
-
-use crate::utils::task::Task;
 use core::fmt;
-use std::collections::HashMap;
 use std::error::Error;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::path::Path;
 
 #[derive(Serialize,Deserialize)]
 pub struct Duty{
     pub base: String,
-    pub mutate: bool,
-    pub tasks: serde_yaml::Value
+    pub tasks: Vec<serde_yaml::Value>,
 }
 
 impl Duty {
@@ -20,6 +15,13 @@ impl Duty {
         let duty: Duty = serde_yaml::from_str(&file_content)?;
         Ok(duty)
     }
+
+    pub fn schedule_tasks(&self) -> Result<(), std::io::Error> {
+        for task in &self.tasks {
+            println!("{:?}", task);
+        }
+        Ok(())
+    } 
 }
 
 impl fmt::Display for Duty {
