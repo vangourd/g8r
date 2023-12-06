@@ -1,15 +1,13 @@
 use serde::{Serialize, Deserialize};
-use crate::utils::task::Task;
+use crate::utils::task::{Task, TaskModule};
 
 #[derive(Serialize,Deserialize)]
-pub struct EchoTask {
-    module: String,
-    mutate: bool,
-    context: serde_yaml::Value
+pub struct Echo {
+    config: serde_yaml::Value,
 }
 
-impl Task for EchoTask {
-    fn new(module: String, mutate: bool, context: serde_yaml::Value) -> Result<Self, std::io::Error> {
-        Ok(EchoTask { module: module, mutate: mutate, context: context })
+impl TaskModule for Echo {
+    fn new(config: serde_yaml::Value) -> Result<Self, std::io::Error> {
+        Ok(Echo {config: config })
     }
 }

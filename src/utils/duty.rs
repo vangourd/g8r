@@ -3,6 +3,8 @@ use std::error::Error;
 use serde::{Deserialize, Serialize};
 use std::fs;
 
+use super::task::{TaskItem, Task};
+
 #[derive(Serialize,Deserialize)]
 pub struct Duty{
     pub base: String,
@@ -18,7 +20,7 @@ impl Duty {
 
     pub fn schedule_tasks(&self) -> Result<(), std::io::Error> {
         for task in &self.tasks {
-            println!("{:?}", task);
+            let t = Task::new(task);
         }
         Ok(())
     } 
