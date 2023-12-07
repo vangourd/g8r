@@ -52,6 +52,16 @@ jobs:
         draft: false
         prerelease: false
         body: "Description of release"
+
+    - name: Upload Stable Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_stable_release.outputs.upload_url }}
+        asset_path: ./target/release/g8r
+        asset_name: g8r
+        asset_content_type: application/octet-stream
     
     - name: Create Latest Release
       if: github.ref == 'refs/heads/main'
@@ -60,18 +70,18 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
+        tag_name: latest
         release_name: Release ${{ github.ref }} (Latest)
         draft: false
-        prerelease: false
+        prerelease: true
         body: "Description of release"
 
-    - name: Upload Releases
+    - name: Upload Latest Release
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        upload_url: ${{ steps.create_latest_release.outputs.upload_url }}
         asset_path: ./target/release/g8r
         asset_name: g8r
         asset_content_type: application/octet-stream
