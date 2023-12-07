@@ -1,15 +1,10 @@
-use std::collections::HashMap;
-
-use serde_derive::Deserialize;
-use serde_yaml::Value;
-
 use crate::modules::echo::Echo;
 
 pub trait TaskModule {
     fn new(config: &serde_yaml::Value) -> Result<Self, std::io::Error>
     where
         Self: Sized; 
-    fn parse(&self) -> Result<(), std::io::Error>;
+    fn parse(&mut self) -> Result<(), std::io::Error>;
     fn apply(&self) -> Result<(), std::io::Error>;
 }
 
@@ -41,7 +36,7 @@ impl Task {
         Ok(Task { module })
     }
 
-    pub fn parse(&self) -> Result<(), std::io::Error> {
+    pub fn parse(&mut self) -> Result<(), std::io::Error> {
         self.module.parse()
     }
 

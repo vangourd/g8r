@@ -20,10 +20,10 @@ impl Duty {
 
     pub fn schedule_tasks(&self) -> Result<(), std::io::Error> {
         for task in &self.tasks {
-            let t = Task::new(task)
+            let mut t = Task::new(task)
                 .expect("Problem defining task");
-            t.parse();
-            t.apply();
+            t.parse().expect("Problem parsing module configuration");
+            t.apply().expect("Problem applying module logic");
         }
         Ok(())
     } 
