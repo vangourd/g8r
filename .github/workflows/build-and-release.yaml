@@ -39,43 +39,19 @@ jobs:
         name: g8r
         path: target/release
 
-    - name: Create Stable Release
-      if: startsWith(github.ref, 'refs/tags/stable')
-      id: create_stable_release
+    - name: Create Release
+      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: stable
-        release_name: Release ${{ github.ref }} (Stable)
+        tag_name: ${{ github.ref == 'refs/head/main' && 'latest' || 'stable' }}
+        release_name: Release ${{ github.ref }} (${{ github.ref == 'refs/heads/main'}})
         draft: false
-        prerelease: false
+        prerelease: ${{ github.ref == 'refs/heads/main' }}
         body: "Description of release"
-
-    - name: Upload Stable Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./target/release/g8r
-        asset_name: g8r
-        asset_content_type: application/octet-stream
-    
-    - name: Create Latest Release
-      if: github.ref == 'refs/heads/main'
-      id: create_latest_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: latest
-        release_name: Release ${{ github.ref }} (Latest)
-        draft: false
-        prerelease: true
-        body: "Description of release"
-
-    - name: Upload Latest Release
+        
+    - name: Upload Release
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
