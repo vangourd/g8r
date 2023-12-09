@@ -63,7 +63,6 @@ jobs:
     #     asset_content_type: application/octet-stream
     
     - name: Create Latest Release
-      if: github.ref == 'refs/heads/main'
       id: create_latest_release
       uses: actions/create-release@v1
       env:
@@ -79,7 +78,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ create_latest_release.ouptputs.upload_url }}
+        upload_url: ${{ create_latest_release.outputs.upload_url }}
         asset_path: './target/release/g8r'
         asset_name: g8r
         asset_content_type: applicaton/octet-stream
