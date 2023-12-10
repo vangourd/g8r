@@ -67,8 +67,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref_name }}
-        release_name: Release ${{ github.ref_name }}
+        tag_name: latest
+        release_name: Latest build for x64 Linux
         draft: true
 
     - name: Upload Release Asset
