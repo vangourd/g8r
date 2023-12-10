@@ -13,7 +13,11 @@ mod modules;
 async fn main() {
     env_logger::init();
     //print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
-    info!("Starting snapper ...");
+    info!("Starting g8r ...");
+
+    if args.len() > 1 && args[1] == "bootstrap" {
+        info!("Bootstrapping")
+    }
 
     let config = utils::config::Config::from_file("config.yaml")
                     .expect("Failed to load config");
