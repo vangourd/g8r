@@ -38,6 +38,28 @@ jobs:
       with:
         name: g8r
         path: target/release
+
+    - name: Remove old latest releases
+      run: |
+        # Set your repository name
+        REPO="vangourd/g8r"
+    
+        # Fetch the list of releases from the GitHub API
+        RELEASES=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                        https://api.github.com/repos/$REPO/releases)
+    
+        # Find the ID of the release tagged as 'latest'
+        LATEST_RELEASE_ID=$(echo "$RELEASES" | jq '.[] | select(.tag_name == "latest") | .id')
+    
+        # Check if a latest release was found
+        if [ -n "$LATEST_RELEASE_ID" ]; then
+          # Delete the latest release
+          curl -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               https://api.github.com/repos/$REPO/releases/$LATEST_RELEASE_ID
+          echo "Deleted latest release (ID: $LATEST_RELEASE_ID)"
+        else
+          echo "No latest release found. Skipping deletion."
+        fi
     
     - name: Create Latest Release
       id: create_latest_release
