@@ -22,7 +22,6 @@ impl Duty {
         for task in &self.tasks {
             let mut t = Task::new(task)
                 .expect("Problem defining task");
-            t.parse().expect("Problem parsing module configuration");
             t.apply().expect("Problem applying module logic");
         }
         Ok(())
