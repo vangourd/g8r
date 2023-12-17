@@ -22,6 +22,16 @@ async fn main() {
     let config = utils::config::Config::from_file("config.yaml")
                     .expect("Failed to load config");
 
+
+    // G8R MODE SERVER
+        // Open a publish socket with zero mq
+            // Start local GitOps reconciliation loop
+            // Detect change for role
+            // Push message to that roles topic
+        
+    // G8R MODE CLIENT
+        // 
+
     println!("Initating reconciliation loop every {}",config.refresh);
 
     let mut iac = utils::repo::IacSync::new(&config);
