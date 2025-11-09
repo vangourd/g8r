@@ -234,7 +234,7 @@ impl StackManager {
         
         info!("Reconciling from config: {}", config_path_str);
         
-        match controller.reconcile_from_nickel(config_path_str).await {
+        match controller.reconcile_from_nickel_with_variables(config_path_str, &stack.name).await {
             Ok(_) => {
                 state.update_stack_sync(&stack.name, &current_version, "synced").await
                     .context("Failed to update stack sync status")?;

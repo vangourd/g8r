@@ -83,6 +83,28 @@ impl AutomationModule for AwsStaticSiteModule {
         }))
     }
     
+    async fn validate_duty(&self, duty: &Duty) -> Result<()> {
+        let spec = &duty.spec;
+        
+        if spec.get("site").is_none() {
+            return Err(anyhow!("Missing required field: 'site' in spec"));
+        }
+        
+        let site = spec.get("site").unwrap();
+        
+        if site.get("domain").is_none() {
+            return Err(anyhow!("Missing required field: 'site.domain' in spec"));
+        }
+        
+        Ok(())
+    }
+    
+    async fn check_state(&self, _roster: &Roster, _duty: &Duty) -> Result<crate::modules::DutyState> {
+        // For static sites, we'll assume they're deployed if they have a domain
+        // More sophisticated checking would query AWS resources
+        Ok(crate::modules::DutyState::Deployed)
+    }
+
     #[instrument(skip(self, _roster, duty))]
     async fn destroy(&self, _roster: &Roster, duty: &Duty) -> Result<()> {
         Ok(())

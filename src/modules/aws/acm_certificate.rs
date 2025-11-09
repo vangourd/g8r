@@ -157,4 +157,32 @@ impl AutomationModule for ACMCertificateModule {
         info!("Successfully destroyed ACM certificate: {}", certificate_arn);
         Ok(())
     }
+
+    async fn validate_duty(&self, duty: &Duty) -> Result<()> {
+        let spec = &duty.spec;
+        
+        if spec.get("domain_name").and_then(|v| v.as_str()).is_none() {
+            anyhow::bail!("ACMCertificate duty requires 'domain_name' in spec");
+        }
+
+        Ok(())
+    }
+    
+    async fn check_state(&self, roster: &Roster, duty: &Duty) -> Result<crate::modules::DutyState> {
+        let certificate_arn = duty.status.as_ref()
+            .and_then(|s| s.get("outputs"))
+            .and_then(|o| o.get("arn"))
+            .and_then(|v| v.as_str());
+            
+        if let Some(arn) = certificate_arn {
+            let acm = self.get_acm_client(roster).await?;
+            if acm.get_certificate(arn).await?.is_some() {
+                Ok(crate::modules::DutyState::Deployed)
+            } else {
+                Ok(crate::modules::DutyState::NotExists)
+            }
+        } else {
+            Ok(crate::modules::DutyState::NotExists)
+        }
+    }
 }
