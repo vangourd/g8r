@@ -141,4 +141,29 @@ impl AutomationModule for IAMUserModule {
         info!("Successfully destroyed IAM user: {}", user_name);
         Ok(())
     }
+
+    async fn validate_duty(&self, duty: &Duty) -> Result<()> {
+        let spec = &duty.spec;
+        
+        if spec.get("user_name").and_then(|v| v.as_str()).is_none() {
+            anyhow::bail!("IAMUser duty requires 'user_name' in spec");
+        }
+
+        Ok(())
+    }
+    
+    async fn check_state(&self, roster: &Roster, duty: &Duty) -> Result<crate::modules::DutyState> {
+        let user_name = duty.spec["user_name"].as_str()
+            .ok_or_else(|| anyhow::anyhow!("user_name is required"))?;
+        
+        let iam = self.get_iam_client(roster).await?;
+        let exists = iam.user_exists(user_name).await
+            .context("Failed to check user existence")?;
+            
+        if exists {
+            Ok(crate::modules::DutyState::Deployed)
+        } else {
+            Ok(crate::modules::DutyState::NotExists)
+        }
+    }
 }

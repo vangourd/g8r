@@ -10,8 +10,10 @@ use crate::utils::{Duty, Roster};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum DutyState {
+    NotExists,
     NotDeployed,
     Deployed,
+    InSync,
     Drifted,
     Failed,
 }
@@ -39,6 +41,10 @@ pub trait AutomationModule: Send + Sync {
     fn required_roster_traits(&self) -> Vec<&str>;
     
     async fn validate(&self, roster: &Roster, duty: &Duty) -> Result<()>;
+    
+    async fn validate_duty(&self, duty: &Duty) -> Result<()>;
+    
+    async fn check_state(&self, roster: &Roster, duty: &Duty) -> Result<DutyState>;
     
     async fn apply(&self, roster: &Roster, duty: &Duty) -> Result<serde_json::Value>;
     

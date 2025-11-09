@@ -180,6 +180,31 @@ impl AutomationModule for S3BucketModule {
         }))
     }
 
+    async fn validate_duty(&self, duty: &Duty) -> Result<()> {
+        let spec = &duty.spec;
+        
+        if spec.get("bucket_name").and_then(|v| v.as_str()).is_none() {
+            anyhow::bail!("S3Bucket duty requires 'bucket_name' in spec");
+        }
+
+        Ok(())
+    }
+    
+    async fn check_state(&self, roster: &Roster, duty: &Duty) -> Result<crate::modules::DutyState> {
+        let bucket_name = duty.spec["bucket_name"].as_str()
+            .ok_or_else(|| anyhow::anyhow!("bucket_name is required"))?;
+        
+        let s3 = self.get_s3_client(roster).await?;
+        let exists = s3.bucket_exists(bucket_name).await
+            .context("Failed to check bucket existence")?;
+            
+        if exists {
+            Ok(crate::modules::DutyState::Deployed)
+        } else {
+            Ok(crate::modules::DutyState::NotExists)
+        }
+    }
+
     async fn destroy(&self, roster: &Roster, duty: &Duty) -> Result<()> {
         let bucket_name = duty.spec["bucket_name"].as_str()
             .ok_or_else(|| anyhow::anyhow!("bucket_name is required"))?;

@@ -207,4 +207,32 @@ impl AutomationModule for CloudFrontDistributionModule {
         info!("Successfully destroyed CloudFront distribution: {}", distribution_id);
         Ok(())
     }
+
+    async fn validate_duty(&self, duty: &Duty) -> Result<()> {
+        let spec = &duty.spec;
+        
+        if spec.get("origin").is_none() {
+            anyhow::bail!("CloudFrontDistribution duty requires 'origin' in spec");
+        }
+
+        Ok(())
+    }
+    
+    async fn check_state(&self, roster: &Roster, duty: &Duty) -> Result<crate::modules::DutyState> {
+        let distribution_id = duty.status.as_ref()
+            .and_then(|s| s.get("outputs"))
+            .and_then(|o| o.get("distribution_id"))
+            .and_then(|v| v.as_str());
+            
+        if let Some(dist_id) = distribution_id {
+            let cloudfront = self.get_cloudfront_client(roster).await?;
+            if cloudfront.get_distribution(dist_id).await?.is_some() {
+                Ok(crate::modules::DutyState::Deployed)
+            } else {
+                Ok(crate::modules::DutyState::NotExists)
+            }
+        } else {
+            Ok(crate::modules::DutyState::NotExists)
+        }
+    }
 }

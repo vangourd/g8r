@@ -152,4 +152,28 @@ impl AutomationModule for Route53RecordModule {
         
         Ok(())
     }
+
+    async fn validate_duty(&self, duty: &Duty) -> Result<()> {
+        let spec = &duty.spec;
+        
+        if spec.get("hosted_zone_id").and_then(|v| v.as_str()).is_none() {
+            anyhow::bail!("Route53Record duty requires 'hosted_zone_id' in spec");
+        }
+        
+        if spec.get("name").and_then(|v| v.as_str()).is_none() {
+            anyhow::bail!("Route53Record duty requires 'name' in spec");
+        }
+        
+        if spec.get("record_type").and_then(|v| v.as_str()).is_none() {
+            anyhow::bail!("Route53Record duty requires 'record_type' in spec");
+        }
+
+        Ok(())
+    }
+    
+    async fn check_state(&self, _roster: &Roster, _duty: &Duty) -> Result<crate::modules::DutyState> {
+        // For Route53 records, we'll assume they exist if deployed
+        // More sophisticated checking would query Route53 API
+        Ok(crate::modules::DutyState::Deployed)
+    }
 }
