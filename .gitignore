@@ -1,0 +1,35 @@
+# Rust
+target/
+**/*.rs.bk
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+config.yaml
+
+# Legacy
+repo/
+
+# Client configurations (keep in separate IaC repo)
+/clients/*
+!/clients/example.ncl
+
+# Private development notes
+CLAUDE.md
+DEVELOPMENT_NOTES.md
+*.private.md
+
+# Build artifacts
+*.log
+*.out
