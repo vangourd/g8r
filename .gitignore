@@ -25,6 +25,9 @@ repo/
 /clients/*
 !/clients/example.ncl
 
+# Local Stack Testing
+stacks/
+
 # Private development notes
 CLAUDE.md
 DEVELOPMENT_NOTES.md
