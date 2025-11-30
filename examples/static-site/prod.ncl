@@ -1,18 +1,13 @@
 let base = import "base.ncl" in
 
 base & {
-  roster = {
-    name = "prod-aws",
-    connection = {
-      region = "us-east-1",
-    },
+  const = {
+    environment = "prod",
+    domain = "example.com",
+    bucket_name = "prod-g8r-test",
   },
   
-  duties = {
-    "site-bucket" = {
-      spec = {
-        bucket_name = "prod-g8r-test",
-      },
-    },
+  roster = {
+    name = "prod-aws",
   },
 }
